@@ -1,8 +1,8 @@
+@importurl ("https://fonts.cdnfonts.com/css/sf-pro-display");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@importurl ("https://fonts.cdnfonts.com/css/sf-pro-display");
 
 @layer base {
   :root {
