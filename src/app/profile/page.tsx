@@ -72,6 +72,7 @@ export default function ProfilePage() {
     }
 
     reset(data);
+    setProfileImageUrl(currentPreviewUrl || "/placeholder.svg");
   };
 
   return (
@@ -111,6 +112,7 @@ export default function ProfilePage() {
               type="text"
               placeholder="Masukkan Nama"
               icon="material-symbols:person-rounded"
+              className="font-light"
               {...register("name")}
             />
             {errors.name && (
@@ -124,6 +126,7 @@ export default function ProfilePage() {
               type="text"
               placeholder="Masukkan Sekolah"
               icon="teenyicons:school-outline"
+              className="font-light"
               {...register("school")}
             />
             {errors.school && (
@@ -139,6 +142,7 @@ export default function ProfilePage() {
               type="email"
               placeholder="Masukkan Email"
               icon="ic:outline-email"
+              className="font-light"
               {...register("email")}
             />
             {errors.email && (
@@ -154,6 +158,7 @@ export default function ProfilePage() {
               type="password"
               placeholder="*****"
               icon="mdi:password-outline"
+              className="font-light"
               showPasswordToggle
               {...register("password")}
             />

@@ -2,17 +2,19 @@ import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 
 interface VideoPageProps {
-  params: {
+  // NEW: params didefinisikan sebagai Promise
+  params: Promise<{
     videoId: string;
-  };
+  }>;
 }
 
 export default async function VideoPage({ params }: VideoPageProps) {
+  // Tetap await params untuk mendapatkan nilai sebenarnya
   const { videoId } = await params;
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      <TitleHeader title="Video Player" /> {/* Judul bisa disesuaikan */}
+      <TitleHeader title="Video Player" />
       <main className="flex-1 py-6 px-4 flex flex-col items-center justify-center">
         <div className="w-full max-w-2xl aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
           <iframe

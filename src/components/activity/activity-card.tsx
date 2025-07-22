@@ -1,17 +1,15 @@
-import type React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
+import type { ReactElement } from "react";
 
 interface ActivityCardProps {
-  icon: string | React.ElementType;
+  icon: string | ReactElement;
   title: string;
   href: string;
 }
 
 export function ActivityCard({ icon, title, href }: ActivityCardProps) {
-  const IconComponent = typeof icon === "string" ? Icon : icon;
-
   return (
     <Link
       href={href}
@@ -21,12 +19,9 @@ export function ActivityCard({ icon, title, href }: ActivityCardProps) {
       )}
     >
       {typeof icon === "string" ? (
-        <IconComponent
-          icon={icon}
-          className="w-24 h-24 text-dashboardIconBlue"
-        />
+        <Icon icon={icon} className="w-24 h-24 text-dashboardIconBlue" />
       ) : (
-        <IconComponent className="w-24 h-24 text-dashboardIconBlue" />
+        icon
       )}
       <span className="text-lg font-semibold text-dashboardTextPrimary">
         {title}

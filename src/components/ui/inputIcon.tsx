@@ -25,7 +25,7 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
     VariantProps<typeof inputVariants> {
   icon?: React.ElementType | string;
   showPasswordToggle?: boolean;
@@ -33,7 +33,15 @@ export interface InputProps
 
 const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, icon: IconProp, showPasswordToggle, ...restProps },
+    {
+      className,
+      type,
+      icon: IconProp,
+      showPasswordToggle,
+      variant,
+      size,
+      ...restProps
+    },
     ref
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -53,7 +61,7 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(
         {IconProp && (
           <div className="absolute left-4 text-gray-400">
             {typeof IconProp === "string" ? (
-              <Icon icon={IconProp as string} className="h-5 w-5" />
+              <Icon icon={IconProp as string} className="h-6 w-6" />
             ) : (
               <IconProp className="h-5 w-5" />
             )}
@@ -62,7 +70,7 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           type={currentType}
           className={cn(
-            inputVariants({ className }),
+            inputVariants({ className, variant, size }),
             IconProp ? "pl-12" : "",
             showPasswordToggle ? "pr-12" : "",
             "text-black"

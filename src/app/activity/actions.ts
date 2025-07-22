@@ -3,7 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { newReportSchema } from "@/lib/schemas";
 
-export async function uploadReport(prevState: any, formData: FormData) {
+export interface UploadReportState {
+  success: boolean;
+  message: string;
+  errors?: Record<string, string[]>;
+}
+
+export async function uploadReport(
+  prevState: UploadReportState | null,
+  formData: FormData
+): Promise<UploadReportState> {
   const date = formData.get("date");
   const activity = formData.get("activity");
   const location = formData.get("location");
@@ -15,7 +24,8 @@ export async function uploadReport(prevState: any, formData: FormData) {
     activity,
     location,
     detailActivity,
-    media: mediaFile,
+    media:
+      mediaFile instanceof File && mediaFile.size > 0 ? mediaFile : undefined,
   });
 
   if (!parsed.success) {
@@ -29,17 +39,22 @@ export async function uploadReport(prevState: any, formData: FormData) {
 
   const { data } = parsed;
 
-  console.log(
-    `Uploading file: ${data.media.name}, type: ${data.media.type}, size: ${data.media.size} bytes`
-  );
+  if (data.media) {
+    console.log(
+      `Uploading file: ${data.media.name}, type: ${data.media.type}, size: ${data.media.size} bytes`
+    );
+  } else {
+    console.log("No media file uploaded.");
+  }
 
   await new Promise((resolve) => setTimeout(resolve, 1500));
+
   console.log({
     date: data.date,
     activity: data.activity,
     location: data.location,
     detailActivity: data.detailActivity,
-    mediaFileName: data.media.name,
+    mediaFileName: data.media ? data.media.name : "No file",
   });
 
   revalidatePath("/activity/report-history");
