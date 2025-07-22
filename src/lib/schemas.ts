@@ -17,3 +17,24 @@ export const newReportSchema = z.object({
 });
 
 export type NewReportFormSchema = z.infer<typeof newReportSchema>;
+
+export const profileFormSchema = z.object({
+  name: z.string().min(1, "Nama tidak boleh kosong."),
+  school: z.string().min(1, "Sekolah tidak boleh kosong."),
+  email: z
+    .string()
+    .min(1, "Email tidak boleh kosong.")
+    .email("Format email tidak valid."),
+  // Password bersifat opsional. Jika diisi, harus memenuhi kriteria.
+  password: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (val && val.length > 0) {
+        return val.length >= 6; //minimal 6 karakter jika diisi
+      }
+      return true;
+    }, "Password minimal 6 karakter jika diisi."),
+});
+
+export type ProfileFormSchema = z.infer<typeof profileFormSchema>;

@@ -69,7 +69,7 @@ const config = {
         dashboardIconBlue: "#0161C0", // Blue for icons
         bottomNavBg: "#F9F8F6", // Background for bottom navigation
         placeholderSoft: "#A0A0A0", // Softer placeholder text color
-        bottomNavIconDefault: "#77A7D1", // New: Default color for bottom navigation icons
+        bottomNavIconDefault: "#77A7D1", // Default color for bottom navigation icons
       },
       borderRadius: {
         lg: "var(--radius)",
