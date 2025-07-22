@@ -10,7 +10,6 @@ export async function uploadReport(prevState: any, formData: FormData) {
   const detailActivity = formData.get("detailActivity");
   const mediaFile = formData.get("media");
 
-  // Validasi data menggunakan Zod schema
   const parsed = newReportSchema.safeParse({
     date,
     activity,

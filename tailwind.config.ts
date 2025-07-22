@@ -67,8 +67,8 @@ const config = {
         dashboardTextPrimary: "#282828", // Dark text
         dashboardTextSecondary: "#555555", // Lighter text
         dashboardIconBlue: "#0161C0", // Blue for icons
-        bottomNavBg: "#F9F8F6", // New: Background for bottom navigation
-        placeholderSoft: "#A0A0A0", // New: Softer placeholder text color
+        bottomNavBg: "#F9F8F6", // Background for bottom navigation
+        placeholderSoft: "#A0A0A0", // Softer placeholder text color
         bottomNavIconDefault: "#77A7D1", // New: Default color for bottom navigation icons
       },
       borderRadius: {

@@ -45,7 +45,6 @@ export function MaterialCard({
         <div className="flex justify-end mt-4 sm:mt-0">
           <Link href={`/education/${videoId}`}>
             {" "}
-            {/* Arahkan ke halaman pemutar video */}
             <Button className="bg-dashboardBlue text-[#FCD53F] rounded-full px-4 py-2 text-sm font-light shadow-md hover:bg-dashboardBlue/90">
               Play +{points}
             </Button>
