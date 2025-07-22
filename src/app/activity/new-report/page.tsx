@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react"; // Import startTransition
 import { useActionState } from "react";
 import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
@@ -12,10 +12,12 @@ import { uploadReport, type UploadReportState } from "../actions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newReportSchema, type NewReportFormSchema } from "@/lib/schemas";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewReportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const [serverState, formAction, isPending] = useActionState<
     UploadReportState | null,
@@ -74,13 +76,23 @@ export default function NewReportPage() {
       if (fileInput) {
         fileInput.value = "";
       }
+      toast({
+        title: "Report Submitted!",
+        description: serverState.message,
+        variant: "default",
+      });
     } else if (serverState?.message && !serverState.success) {
       setError("root.serverError", {
         type: "server",
         message: serverState.message,
       });
+      toast({
+        title: "Submission Failed",
+        description: serverState.message,
+        variant: "destructive",
+      });
     }
-  }, [serverState, reset, setFile, setPreviewUrl, setError]);
+  }, [serverState, reset, setFile, setPreviewUrl, setError, toast]);
 
   const onSubmit = async (data: NewReportFormSchema) => {
     const formData = new FormData();
@@ -93,7 +105,10 @@ export default function NewReportPage() {
       formData.append("media", file);
     }
 
-    formAction(formData);
+    // Wrap formAction call in startTransition
+    startTransition(() => {
+      formAction(formData);
+    });
   };
 
   return (

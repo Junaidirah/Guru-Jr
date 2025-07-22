@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
 
 interface UploadMediaCardProps {
   onFileChange: (file: File | null) => void;
@@ -23,17 +24,34 @@ export function UploadMediaCard({
   onClearPreview,
 }: UploadMediaCardProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { toast } = useToast(); // Initialize useToast
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      onFileChange(event.target.files[0]);
-    } else {
-      onFileChange(null);
+    const selectedFile = event.target.files ? event.target.files[0] : null;
+
+    if (selectedFile) {
+      if (!allowedTypes.includes(selectedFile.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Only JPG, PNG, or WEBP formats are allowed.",
+          variant: "destructive",
+        });
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        onFileChange(null);
+        return;
+      }
     }
+
+    onFileChange(selectedFile);
     register.onChange(event);
   };
 

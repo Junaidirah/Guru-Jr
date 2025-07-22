@@ -37,3 +37,36 @@ export const profileFormSchema = z.object({
 });
 
 export type ProfileFormSchema = z.infer<typeof profileFormSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email tidak boleh kosong.")
+    .email("Format email tidak valid."),
+  newPassword: z.string().min(6, "Password baru minimal 6 karakter."),
+});
+
+export type ForgotPasswordFormSchema = z.infer<typeof forgotPasswordSchema>;
+
+// New schemas for Login and Signup
+export const signupFormSchema = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter."),
+  school: z.string().min(2, "Nama sekolah minimal 2 karakter."),
+  email: z
+    .string()
+    .email("Format email tidak valid.")
+    .min(1, "Email tidak boleh kosong."),
+  password: z.string().min(6, "Password minimal 6 karakter."),
+});
+
+export type SignupFormSchema = z.infer<typeof signupFormSchema>;
+
+export const loginFormSchema = z.object({
+  email: z
+    .string()
+    .email("Format email tidak valid.")
+    .min(1, "Email tidak boleh kosong."),
+  password: z.string().min(1, "Password tidak boleh kosong."),
+});
+
+export type LoginFormSchema = z.infer<typeof loginFormSchema>;

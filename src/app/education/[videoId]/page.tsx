@@ -2,14 +2,12 @@ import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 
 interface VideoPageProps {
-  // NEW: params didefinisikan sebagai Promise
   params: Promise<{
     videoId: string;
   }>;
 }
 
 export default async function VideoPage({ params }: VideoPageProps) {
-  // Tetap await params untuk mendapatkan nilai sebenarnya
   const { videoId } = await params;
 
   return (

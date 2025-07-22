@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import type React from "react";
+import { useRouter } from "next/navigation";
 
 import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
@@ -14,6 +15,8 @@ import { profileFormSchema, type ProfileFormSchema } from "@/lib/schemas";
 
 import { useProfileImage } from "@/contexts/profile-image-context";
 import { logout } from "./actions";
+import { useToast } from "@/hooks/use-toast";
+import { currentUserData } from "@/data/current-user";
 
 import {
   AlertDialog,
@@ -29,13 +32,8 @@ import {
 
 export default function ProfilePage() {
   const { profileImageUrl, setProfileImageUrl } = useProfileImage();
-
-  const currentUser = {
-    name: "Cimong",
-    school: "SD SARIJADI SELATAN",
-    email: "cimong123@gmail.com",
-    password: "secret123",
-  };
+  const { toast } = useToast();
+  const router = useRouter();
 
   const {
     register,
@@ -44,7 +42,7 @@ export default function ProfilePage() {
     reset,
   } = useForm<ProfileFormSchema>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: currentUser,
+    defaultValues: currentUserData,
     mode: "onChange",
   });
 
@@ -86,17 +84,38 @@ export default function ProfilePage() {
     }
     reset(data);
     setProfileImageUrl(currentPreviewUrl || "/placeholder.svg");
+    toast({
+      title: "Profile Updated!",
+      description: "Your profile information has been saved.",
+      variant: "default",
+    });
   };
 
   const handleLogoutConfirm = async () => {
-    await logout();
+    const result = await logout();
+
+    if (result.success) {
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+        variant: "default",
+      });
+      setTimeout(() => {
+        router.push("/login");
+      }, 300);
+    } else {
+      toast({
+        title: "Logout Failed",
+        description: result.message || "An error occurred during logout.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
       <TitleHeader title="Profile" />
       <main className="flex-1 space-y-6 py-6 px-4 flex flex-col items-center">
-        {/* Avatar Section */}
         <div className="relative mb-8 mt-4">
           <Avatar className="w-32 h-32 border-4 border-white shadow-md">
             <AvatarImage
@@ -123,7 +142,6 @@ export default function ProfilePage() {
           />
         </div>
 
-        {/* Input Fields */}
         <div className="w-full max-w-sm space-y-4">
           <div>
             <InputWithIcon
@@ -185,7 +203,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Save Button */}
         <div className="w-full max-w-sm mt-8">
           <Button
             type="submit"
@@ -197,7 +214,6 @@ export default function ProfilePage() {
           </Button>
         </div>
 
-        {/* Logout Button with AlertDialog */}
         <div className="w-full max-w-sm mt-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -211,20 +227,20 @@ export default function ProfilePage() {
             <AlertDialogContent className="text-dashboardTextPrimary">
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Apakah Anda yakin ingin keluar?
+                  Are you sure you want to log out?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  Anda akan keluar dari akun Anda. Anda bisa masuk kembali kapan
-                  saja.
+                  You will be logged out of your account. You can log back in at
+                  any time.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogoutConfirm}
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
-                  Keluar
+                  Log Out
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

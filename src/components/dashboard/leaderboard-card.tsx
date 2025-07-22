@@ -2,29 +2,9 @@
 
 import { Icon } from "@iconify/react";
 import Image from "next/image";
+import { leaderboardData } from "@/data/leaderboard-data";
 
 export function LeaderboardCard() {
-  const leaderboardData = [
-    {
-      rank: 1,
-      name: "Cimong",
-      points: 400,
-      avatar: "/images/cimong.png",
-    },
-    {
-      rank: 2,
-      name: "Cimong",
-      points: 400,
-      avatar: "/images/cimong.png",
-    },
-    {
-      rank: 3,
-      name: "Cimong",
-      points: 400,
-      avatar: "/images/cimong.png",
-    },
-  ];
-
   return (
     <div className="relative bg-dashboardBlue rounded-3xl text-dashboardTextPrimary shadow-card overflow-hidden mx-4">
       <div className="absolute top-12 left-0 w-full h-full bg-dashboardHeaderBg rounded-t-3xl z-0"></div>

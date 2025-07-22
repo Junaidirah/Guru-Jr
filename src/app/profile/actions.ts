@@ -1,12 +1,11 @@
 "use server";
 
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation" // No longer redirecting directly
 
 export async function logout() {
   console.log("User logged out (simulated).");
 
   await new Promise((resolve) => setTimeout(resolve, 500));
 
-  // Redirect ke halaman login setelah logout
-  redirect("/login");
+  return { success: true, message: "Logout successful." };
 }
