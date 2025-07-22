@@ -11,7 +11,21 @@ import { Icon } from "@iconify/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileFormSchema, type ProfileFormSchema } from "@/lib/schemas";
+
 import { useProfileImage } from "@/contexts/profile-image-context";
+import { logout } from "./actions";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ProfilePage() {
   const { profileImageUrl, setProfileImageUrl } = useProfileImage();
@@ -70,15 +84,19 @@ export default function ProfilePage() {
         "Untuk persistensi, gambar ini perlu diunggah ke backend dan URL permanennya disimpan."
       );
     }
-
     reset(data);
     setProfileImageUrl(currentPreviewUrl || "/placeholder.svg");
+  };
+
+  const handleLogoutConfirm = async () => {
+    await logout();
   };
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
       <TitleHeader title="Profile" />
       <main className="flex-1 space-y-6 py-6 px-4 flex flex-col items-center">
+        {/* Avatar Section */}
         <div className="relative mb-8 mt-4">
           <Avatar className="w-32 h-32 border-4 border-white shadow-md">
             <AvatarImage
@@ -105,6 +123,7 @@ export default function ProfilePage() {
           />
         </div>
 
+        {/* Input Fields */}
         <div className="w-full max-w-sm space-y-4">
           <div>
             <InputWithIcon
@@ -112,7 +131,6 @@ export default function ProfilePage() {
               type="text"
               placeholder="Masukkan Nama"
               icon="material-symbols:person-rounded"
-              className="font-light"
               {...register("name")}
             />
             {errors.name && (
@@ -126,7 +144,6 @@ export default function ProfilePage() {
               type="text"
               placeholder="Masukkan Sekolah"
               icon="teenyicons:school-outline"
-              className="font-light"
               {...register("school")}
             />
             {errors.school && (
@@ -142,7 +159,6 @@ export default function ProfilePage() {
               type="email"
               placeholder="Masukkan Email"
               icon="ic:outline-email"
-              className="font-light"
               {...register("email")}
             />
             {errors.email && (
@@ -158,7 +174,6 @@ export default function ProfilePage() {
               type="password"
               placeholder="*****"
               icon="mdi:password-outline"
-              className="font-light"
               showPasswordToggle
               {...register("password")}
             />
@@ -170,6 +185,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Save Button */}
         <div className="w-full max-w-sm mt-8">
           <Button
             type="submit"
@@ -179,6 +195,40 @@ export default function ProfilePage() {
           >
             Save
           </Button>
+        </div>
+
+        {/* Logout Button with AlertDialog */}
+        <div className="w-full max-w-sm mt-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                className="w-full h-[58px] rounded-[25px] bg-red-500 text-white text-lg font-light shadow-md hover:bg-red-600"
+              >
+                Log Out
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="text-dashboardTextPrimary">
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah Anda yakin ingin keluar?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Anda akan keluar dari akun Anda. Anda bisa masuk kembali kapan
+                  saja.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleLogoutConfirm}
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                >
+                  Keluar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </main>
       <BottomNavigation />
