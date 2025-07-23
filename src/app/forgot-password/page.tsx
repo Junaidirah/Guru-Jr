@@ -21,31 +21,79 @@ export default function ForgotPasswordPage() {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     reset,
+    setError,
   } = useForm<ForgotPasswordFormSchema>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: ForgotPasswordFormSchema) => {
+  const onSubmit = async (data: ForgotPasswordFormSchema) => {
     console.log("Reset password data submitted:", data);
     // TODO: kirim ke backend di sini
     // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Password Reset Successful!",
-          description: "Your password has been reset. You can now log in.",
-          variant: "default",
-        });
-        reset();
-        resolve(true);
-      }, 1500);
-    });
+    try {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (data.email === "notfound@example.com") {
+            // Simulasi error dari backend
+            reject({
+              message: "User not found",
+              errors: { email: ["Email tidak terdaftar."] },
+            });
+          } else {
+            resolve(true);
+          }
+        }, 1500);
+      });
+
+      toast({
+        title: "Password Reset Successful!",
+        description: "Your password has been reset. You can now log in.",
+        variant: "default",
+      });
+      reset();
+    } catch (error: unknown) {
+      // Change 'any' to 'unknown'
+      console.error("Password reset failed:", error);
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+      toast({
+        title: "Password Reset Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "errors" in error &&
+        typeof (error as { errors: Record<string, string[]> }).errors ===
+          "object"
+      ) {
+        const apiErrors = (error as { errors: Record<string, string[]> })
+          .errors;
+
+        for (const key in apiErrors) {
+          if (key in data) {
+            setError(key as keyof ForgotPasswordFormSchema, {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          } else if (key === "root") {
+            setError("root.serverError", {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          }
+        }
+      }
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 font-sans bg-[#F0F8FF]">
-      <div className="w-full max-w-sm mx-auto space-y-8 text-center">
+      <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
             src="/images/gurujr-blue.png"
@@ -94,7 +142,11 @@ export default function ForgotPasswordPage() {
               </p>
             )}
           </div>
-
+          {errors.root?.serverError && (
+            <p className="text-red-500 text-sm text-center mt-1">
+              {errors.root.serverError.message}
+            </p>
+          )}
           <Button
             type="submit"
             className="w-full h-[58px] rounded-[25px] bg-primary-button font-light text-white text-lg shadow-md hover:bg-primary-button/90"

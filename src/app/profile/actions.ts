@@ -1,7 +1,5 @@
 "use server";
 
-// import { redirect } from "next/navigation" // No longer redirecting directly
-
 export async function logout() {
   console.log("User logged out (simulated).");
 

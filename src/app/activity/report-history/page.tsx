@@ -1,14 +1,16 @@
 import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { ReportHistoryCard } from "@/components/activity/report-history-card";
-import { reportHistoryData } from "@/data/report-history";
+import { getReportHistory } from "@/services/reports";
 
-export default function ReportHistoryPage() {
+export default async function ReportHistoryPage() {
+  const reports = await getReportHistory();
+
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
       <TitleHeader title="History Report" />
       <main className="flex-1 space-y-4 py-6 px-4">
-        {reportHistoryData.map((report) => (
+        {reports.map((report) => (
           <ReportHistoryCard
             key={report.id}
             activity={report.activity}

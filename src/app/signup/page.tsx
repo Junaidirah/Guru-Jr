@@ -18,26 +18,73 @@ export default function SignUpPage() {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     reset,
+    setError, // Tambahkan setError
   } = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: SignupFormSchema) => {
+  const onSubmit = async (data: SignupFormSchema) => {
     console.log("Signup data submitted:", data);
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Sign Up Successful!",
-          description: "Your account has been created. Please log in.",
-          variant: "default",
-        });
-        reset();
-        router.push("/login");
-        resolve(true);
-      }, 1500);
-    });
+    // Simulasi API call dengan kemungkinan error
+    try {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (data.email === "existing@example.com") {
+            // Simulasi error dari backend
+            reject({
+              message: "Email already used",
+              errors: { email: ["Email ini sudah terdaftar."] },
+            });
+          } else {
+            resolve(true);
+          }
+        }, 1500);
+      });
+
+      toast({
+        title: "Sign Up Successful!",
+        description: "Your account has been created. Please log in.",
+        variant: "default",
+      });
+      reset();
+      router.push("/login");
+    } catch (error: unknown) {
+      console.error("Signup failed:", error);
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+      toast({
+        title: "Sign Up Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "errors" in error &&
+        typeof (error as { errors: Record<string, string[]> }).errors ===
+          "object"
+      ) {
+        const apiErrors = (error as { errors: Record<string, string[]> })
+          .errors;
+        for (const key in apiErrors) {
+          if (key in data) {
+            setError(key as keyof SignupFormSchema, {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          } else if (key === "root") {
+            setError("root.serverError", {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          }
+        }
+      }
+    }
   };
 
   return (
@@ -108,6 +155,11 @@ export default function SignUpPage() {
             )}
           </div>
         </form>
+        {errors.root?.serverError && (
+          <p className="text-red-500 text-sm text-center mt-1">
+            {errors.root.serverError.message}
+          </p>
+        )}
         <Button
           type="submit"
           className="w-full h-[58px] rounded-[25px] bg-primary-button text-white text-lg font-light shadow-md hover:bg-primary-button/90"

@@ -1,5 +1,3 @@
-// data/leaderboard-data.ts
-
 export interface LeaderboardEntry {
   rank: number;
   name: string;

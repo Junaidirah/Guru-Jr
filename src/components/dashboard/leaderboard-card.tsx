@@ -2,9 +2,49 @@
 
 import { Icon } from "@iconify/react";
 import Image from "next/image";
-import { leaderboardData } from "@/data/leaderboard-data";
+import { useEffect, useState } from "react";
+import { getLeaderboardData } from "@/services/leaderboard";
+import type { LeaderboardEntry } from "@/data/leaderboard-data";
 
 export function LeaderboardCard() {
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getLeaderboardData();
+        setLeaderboardData(data);
+      } catch (err) {
+        setError("Failed to load leaderboard data.");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="relative bg-dashboardBlue rounded-3xl text-dashboardTextPrimary shadow-card overflow-hidden mx-4 p-6 text-center">
+        Loading leaderboard...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="relative bg-dashboardBlue rounded-3xl text-red-500 shadow-card overflow-hidden mx-4 p-6 text-center">
+        Error: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="relative bg-dashboardBlue rounded-3xl text-dashboardTextPrimary shadow-card overflow-hidden mx-4">
       <div className="absolute top-12 left-0 w-full h-full bg-dashboardHeaderBg rounded-t-3xl z-0"></div>
@@ -23,11 +63,11 @@ export function LeaderboardCard() {
               <span
                 className={`text-xl font-bold ${
                   item.rank === 1
-                    ? "text-[#FFB02E]"
+                    ? "text-leaderboardGold"
                     : item.rank === 2
-                    ? "text-[#A5A5A5]"
+                    ? "text-leaderboardSilver"
                     : item.rank === 3
-                    ? "text-[#6D4534]"
+                    ? "text-leaderboardBronze"
                     : "text-gray-700"
                 }`}
               >
@@ -45,11 +85,11 @@ export function LeaderboardCard() {
               <span
                 className={`text-xl font-semibold ${
                   item.rank === 1
-                    ? "text-[#FFB02E]"
+                    ? "text-leaderboardGold"
                     : item.rank === 2
-                    ? "text-[#A5A5A5]"
+                    ? "text-leaderboardSilver"
                     : item.rank === 3
-                    ? "text-[#6D4534]"
+                    ? "text-leaderboardBronze"
                     : "text-gray-700"
                 }`}
               >
@@ -60,11 +100,11 @@ export function LeaderboardCard() {
             <span
               className={`text-xl font-bold ${
                 item.rank === 1
-                  ? "text-[#FFB02E]"
+                  ? "text-leaderboardGold"
                   : item.rank === 2
-                  ? "text-[#A5A5A5]"
+                  ? "text-leaderboardSilver"
                   : item.rank === 3
-                  ? "text-[#6D4534]"
+                  ? "text-leaderboardBronze"
                   : "text-white"
               }`}
             >

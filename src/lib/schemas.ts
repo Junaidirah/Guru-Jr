@@ -6,12 +6,17 @@ export const newReportSchema = z.object({
   location: z.string().min(1, "Lokasi tidak boleh kosong."),
   detailActivity: z.string().min(1, "Detail aktivitas tidak boleh kosong."),
   media: z
-    .instanceof(File, { message: "Media harus berupa file." })
-    .refine((file) => file.size > 0, "File media tidak boleh kosong.")
-    .refine((file) => file.size <= 5 * 1024 * 1024, "Ukuran file maksimal 5MB.")
+    .any()
+    .transform((val) => (val instanceof File && val.size > 0 ? val : undefined))
     .refine(
-      (file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type),
+      (file) =>
+        file === undefined ||
+        ["image/jpeg", "image/png", "image/webp"].includes(file.type),
       "Hanya format JPG, PNG, atau WEBP yang diizinkan."
+    )
+    .refine(
+      (file) => file === undefined || file.size <= 5 * 1024 * 1024,
+      "Ukuran file maksimal 5MB."
     )
     .optional(),
 });
@@ -19,8 +24,8 @@ export const newReportSchema = z.object({
 export type NewReportFormSchema = z.infer<typeof newReportSchema>;
 
 export const profileFormSchema = z.object({
-  name: z.string().min(1, "Nama tidak boleh kosong."),
-  school: z.string().min(1, "Sekolah tidak boleh kosong."),
+  name: z.string().min(2, "Nama minimal 2 karakter."),
+  school: z.string().min(2, "Sekolah minimal 2 karakter."),
   email: z
     .string()
     .min(1, "Email tidak boleh kosong.")
@@ -48,7 +53,6 @@ export const forgotPasswordSchema = z.object({
 
 export type ForgotPasswordFormSchema = z.infer<typeof forgotPasswordSchema>;
 
-// New schemas for Login and Signup
 export const signupFormSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter."),
   school: z.string().min(2, "Nama sekolah minimal 2 karakter."),
@@ -66,7 +70,7 @@ export const loginFormSchema = z.object({
     .string()
     .email("Format email tidak valid.")
     .min(1, "Email tidak boleh kosong."),
-  password: z.string().min(1, "Password tidak boleh kosong."),
+  password: z.string().min(6, "Password minimal 6 karakter."),
 });
 
 export type LoginFormSchema = z.infer<typeof loginFormSchema>;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, startTransition } from "react"; // Import startTransition
+import { useState, useEffect, startTransition } from "react";
 import { useActionState } from "react";
 import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
@@ -105,7 +105,6 @@ export default function NewReportPage() {
       formData.append("media", file);
     }
 
-    // Wrap formAction call in startTransition
     startTransition(() => {
       formAction(formData);
     });

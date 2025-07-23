@@ -24,7 +24,7 @@ export function UploadMediaCard({
   onClearPreview,
 }: UploadMediaCardProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { toast } = useToast(); // Initialize useToast
+  const { toast } = useToast();
 
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 

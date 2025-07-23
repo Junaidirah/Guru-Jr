@@ -7,7 +7,6 @@ import { BottomNavigation } from "@/components/layout/bottom-navigation";
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      {/* Hapus -mt-4 di sini, karena sudah diatur di DashboardHeader */}
       <DashboardHeader />
       <main className="flex-1 space-y-6 py-6 px-4">
         <TotalPointCard />

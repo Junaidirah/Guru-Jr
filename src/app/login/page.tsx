@@ -8,43 +8,98 @@ import { InputWithIcon } from "@/components/ui/inputIcon";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema, type LoginFormSchema } from "@/lib/schemas";
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { toast } = useToast(); // Initialize useToast
+  const { toast } = useToast();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     reset,
+    setError,
   } = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: LoginFormSchema) => {
+  const onSubmit = async (data: LoginFormSchema) => {
     console.log("Login data submitted:", data);
-    // TODO: Implement actual login logic (e.g., call a Server Action or API)
-    // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Login Successful!",
-          description: "You have been successfully logged in.",
-          variant: "default", // or "success" if you have a custom variant
-        });
-        router.push("/dashboard");
-        reset();
-        resolve(true);
-      }, 1500);
-    });
+
+    // Simulasi API call dengan kemungkinan error
+    try {
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (data.email === "error@example.com") {
+            // Simulasi error dari backend
+            reject({
+              message: "Invalid credentials",
+              errors: { email: ["Email atau password salah."] },
+            });
+          } else if (
+            data.email === "user@example.com" &&
+            data.password === "password123"
+          ) {
+            resolve(true);
+          } else {
+            reject({
+              message: "Invalid credentials",
+              errors: { root: ["Email atau password salah."] },
+            });
+          }
+        }, 1500);
+      });
+
+      toast({
+        title: "Login Successful!",
+        description: "You have been successfully logged in.",
+        variant: "default",
+      });
+      router.push("/dashboard");
+      reset();
+    } catch (error: unknown) {
+      // Change 'any' to 'unknown'
+      console.error("Login failed:", error);
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+      toast({
+        title: "Login Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "errors" in error &&
+        typeof (error as { errors: Record<string, string[]> }).errors ===
+          "object"
+      ) {
+        const apiErrors = (error as { errors: Record<string, string[]> })
+          .errors;
+        for (const key in apiErrors) {
+          if (key in data) {
+            setError(key as keyof LoginFormSchema, {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          } else if (key === "root") {
+            setError("root.serverError", {
+              type: "server",
+              message: apiErrors[key][0],
+            });
+          }
+        }
+      }
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 font-sans bg-[#F0F8FF]">
-      <div className="w-full max-w-sm mx-auto space-y-8 text-center">
+      <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
             src="/images/gurujr-blue.png"
@@ -98,6 +153,11 @@ export default function LoginPage() {
               Forgot password?
             </Link>
           </div>
+          {errors.root?.serverError && (
+            <p className="text-red-500 text-sm text-center mt-1">
+              {errors.root.serverError.message}
+            </p>
+          )}
           <Button
             type="submit"
             className="w-full h-[58px] rounded-[25px] bg-primary-button font-light text-white text-lg shadow-md hover:bg-primary-button/90"

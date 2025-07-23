@@ -19,17 +19,28 @@ export async function uploadReport(
   const detailActivity = formData.get("detailActivity");
   const mediaFile = formData.get("media");
 
+  console.log("Server Action: uploadReport received formData.");
+  console.log("mediaFile type:", typeof mediaFile);
+  console.log("mediaFile instanceof File:", mediaFile instanceof File);
+  if (mediaFile instanceof File) {
+    console.log("mediaFile name:", mediaFile.name);
+    console.log("mediaFile type (MIME):", mediaFile.type);
+    console.log("mediaFile size:", mediaFile.size);
+  } else {
+    console.log("mediaFile value:", mediaFile);
+  }
+
   const parsed = newReportSchema.safeParse({
     date,
     activity,
     location,
     detailActivity,
-    media:
-      mediaFile instanceof File && mediaFile.size > 0 ? mediaFile : undefined,
+    media: mediaFile,
   });
 
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors;
+    console.error("Validation failed on server:", parsed.error);
     return {
       success: false,
       message: "Validasi gagal. Periksa kembali input Anda.",
