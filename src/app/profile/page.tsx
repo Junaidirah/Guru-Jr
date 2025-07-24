@@ -58,7 +58,7 @@ export default function ProfilePage() {
         setIsLoadingUser(true);
         const user = await getCurrentUser();
         setInitialUserData(user);
-        reset(user); // <- reset digunakan di sini
+        reset(user);
       } catch (err) {
         setUserError("Failed to load user data.");
         console.error(err);

@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordFormSchema) => {
     console.log("Reset password data submitted:", data);
-    // TODO: kirim ke backend di sini
+
     // Simulate API call
     try {
       await new Promise((resolve, reject) => {
@@ -53,7 +53,6 @@ export default function ForgotPasswordPage() {
       });
       reset();
     } catch (error: unknown) {
-      // Change 'any' to 'unknown'
       console.error("Password reset failed:", error);
       const errorMessage =
         (error as { message?: string })?.message ||
@@ -96,11 +95,12 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
-            src="/images/gurujr-blue.png"
+            src="/images/gurujr-blue.svg"
             alt="Jasa Raharja Logo"
             width={160}
             height={125}
             className="mx-auto"
+            priority
           />
           <div className="space-y-2 text-left pt-10">
             <h1 className="text-[32px] font-extrabold text-[#000000] tracking-tighter leading-tight">

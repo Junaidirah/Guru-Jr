@@ -14,12 +14,12 @@ export function ActivityCard({ icon, title, href }: ActivityCardProps) {
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-10 bg-dashboardHeaderBg rounded-3xl p-6 shadow-card mx-4",
+        "flex items-center gap-6 bg-dashboardHeaderBg rounded-3xl p-6 shadow-card mx-4",
         "hover:bg-dashboardHeaderBg/80 transition-colors duration-200"
       )}
     >
       {typeof icon === "string" ? (
-        <Icon icon={icon} className="w-24 h-24 text-dashboardIconBlue" />
+        <Icon icon={icon} className="w-20 h-20 text-dashboardIconBlue" />
       ) : (
         icon
       )}

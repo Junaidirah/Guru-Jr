@@ -18,7 +18,7 @@ export default function SignUpPage() {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     reset,
-    setError, // Tambahkan setError
+    setError,
   } = useForm<SignupFormSchema>({
     resolver: zodResolver(signupFormSchema),
     mode: "onChange",

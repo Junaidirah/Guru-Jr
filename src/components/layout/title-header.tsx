@@ -6,7 +6,7 @@ export function TitleHeader({ title }: { title: string }) {
   const router = useRouter();
 
   return (
-    <div className="flex items-center px-4 pt-10 pb-6 bg-dashboardHeaderBg rounded-b-3xl w-full">
+    <div className="flex items-center px-4 pt-5 pb-6 bg-dashboardHeaderBg rounded-b-3xl w-full">
       <button
         onClick={() => router.back()}
         className="text-dashboardTextPrimary bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm"

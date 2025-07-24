@@ -128,6 +128,7 @@ export default function NewReportPage() {
                 type="date"
                 placeholder="DD/MM/YY"
                 {...register("date")}
+                className="w-full min-w-0 flex-1 appearance-none"
               />
               {errors.date && (
                 <p className="text-red-500 text-sm mt-1">

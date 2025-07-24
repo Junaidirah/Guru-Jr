@@ -12,7 +12,7 @@ export function DashboardHeader() {
   };
 
   return (
-    <div className="flex items-center justify-between px-4 pt-10 pb-2 bg-dashboardHeaderBg rounded-b-3xl w-full">
+    <div className="flex items-center justify-between px-4 pt-5 pb-2 bg-dashboardHeaderBg rounded-b-3xl w-full">
       <div className="text-dashboardTextPrimary">
         <h1 className="text-2xl font-bold">Hello Cimong</h1>
         <p className="text-sm text-dashboardTextSecondary">

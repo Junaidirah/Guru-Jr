@@ -17,13 +17,14 @@ export default function StartPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-dashboardBlue p-4">
-      <div className="flex flex-col items-center space-y-6 text-white">
+      <div className="flex flex-col items-center text-white">
         <Image
-          src="/images/gurujr-white.png"
+          src="/images/gurujr-white.svg"
           alt="Guru-JR Logo"
-          width={150}
-          height={150}
+          width={200}
+          height={200}
           priority
+          className="object-contain"
         />
       </div>
     </div>

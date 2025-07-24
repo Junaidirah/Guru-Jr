@@ -7,5 +7,5 @@ export const currentUserData: {
   name: "Cimong",
   school: "SD SARIJADI SELATAN",
   email: "cimong123@gmail.com",
-  password: "secret123",
+  password: "password123",
 };

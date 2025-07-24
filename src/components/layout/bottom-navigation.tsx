@@ -16,7 +16,7 @@ function NavItem({ icon, label, href, isActive }: NavItemProps) {
     <Link
       href={href}
       className={cn(
-        "flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors",
+        "flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-colors flex-1",
         isActive
           ? "text-dashboardIconBlue"
           : "text-bottomNavIconDefault hover:text-dashboardBlue"
@@ -27,7 +27,10 @@ function NavItem({ icon, label, href, isActive }: NavItemProps) {
         className={cn("w-10 h-10", isActive && "text-dashboardIconBlue")}
       />
       <span
-        className={cn("text-xs", isActive ? "font-semibold" : "font-medium")}
+        className={cn(
+          "text-xs whitespace-nowrap text-center",
+          isActive ? "font-semibold" : "font-medium"
+        )}
       >
         {label}
       </span>
@@ -39,7 +42,7 @@ export function BottomNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-bottomNavBg border-t border-gray-200 shadow-lg p-2 flex justify-around items-center z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-bottomNavBg border-t border-gray-200 shadow-lg px-2 py-2 flex justify-around items-center z-50">
       <NavItem
         icon="material-symbols:home-rounded"
         label="Dashboard"
