@@ -9,10 +9,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema, type LoginFormSchema } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const {
     register,
@@ -26,46 +29,29 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormSchema) => {
-    console.log("Login data submitted:", data);
+    console.log("Data login dikirim:", data);
 
-    // Simulasi API call dengan kemungkinan error
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.email === "error@example.com") {
-            // Simulasi error dari backend
-            reject({
-              message: "Invalid credentials",
-              errors: { email: ["Email atau password salah."] },
-            });
-          } else if (
-            data.email === "user@example.com" &&
-            data.password === "password123"
-          ) {
-            resolve(true);
-          } else {
-            reject({
-              message: "Invalid credentials",
-              errors: { root: ["Email atau password salah."] },
-            });
-          }
-        }, 1500);
+      const response = await apiClient<{ token: string }>("/user/login", {
+        method: "POST",
+        body: data,
       });
 
+      await login(response.token);
       toast({
-        title: "Login Successful!",
-        description: "You have been successfully logged in.",
+        title: "Login Berhasil!",
+        description: "Anda telah berhasil masuk.",
         variant: "default",
       });
       router.push("/dashboard");
       reset();
     } catch (error: unknown) {
-      console.error("Login failed:", error);
+      console.error("Login gagal:", error);
       const errorMessage =
         (error as { message?: string })?.message ||
-        "An unexpected error occurred.";
+        "Terjadi kesalahan tak terduga.";
       toast({
-        title: "Login Failed",
+        title: "Login Gagal",
         description: errorMessage,
         variant: "destructive",
       });
@@ -92,6 +78,11 @@ export default function LoginPage() {
             });
           }
         }
+      } else {
+        setError("email", {
+          type: "server",
+          message: errorMessage,
+        });
       }
     }
   };
@@ -101,7 +92,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
-            src="/images/gurujr-blue.svg"
+            src="/images/gurujr-blue.png"
             alt="Jasa Raharja Logo"
             width={160}
             height={125}

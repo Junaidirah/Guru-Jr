@@ -77,7 +77,7 @@ export default function NewReportPage() {
         fileInput.value = "";
       }
       toast({
-        title: "Report Submitted!",
+        title: "Laporan Dikirim!",
         description: serverState.message,
         variant: "default",
       });
@@ -87,7 +87,7 @@ export default function NewReportPage() {
         message: serverState.message,
       });
       toast({
-        title: "Submission Failed",
+        title: "Pengiriman Gagal",
         description: serverState.message,
         variant: "destructive",
       });
@@ -96,10 +96,10 @@ export default function NewReportPage() {
 
   const onSubmit = async (data: NewReportFormSchema) => {
     const formData = new FormData();
-    formData.append("date", data.date);
+
+    formData.append("content", data.content);
     formData.append("activity", data.activity);
     formData.append("location", data.location);
-    formData.append("detailActivity", data.detailActivity);
 
     if (file) {
       formData.append("media", file);
@@ -112,41 +112,21 @@ export default function NewReportPage() {
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      <TitleHeader title="New Report" />
+      <TitleHeader title="Laporan Baru" />
       <main className="flex-1 space-y-6 py-6 px-4">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <div>
               <Label
-                htmlFor="date"
-                className="text-dashboardTextPrimary font-semibold mb-2 block"
-              >
-                Date
-              </Label>
-              <Input
-                id="date"
-                type="date"
-                placeholder="DD/MM/YY"
-                {...register("date")}
-                className="w-full min-w-0 flex-1 appearance-none"
-              />
-              {errors.date && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.date.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <Label
                 htmlFor="activity"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Activity
+                Aktivitas
               </Label>
               <Input
                 id="activity"
                 type="text"
-                placeholder="Massukkan Sosialisasi"
+                placeholder="Masukkan Sosialisasi"
                 {...register("activity")}
               />
               {errors.activity && (
@@ -160,7 +140,7 @@ export default function NewReportPage() {
                 htmlFor="location"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Location
+                Lokasi
               </Label>
               <Input
                 id="location"
@@ -176,27 +156,27 @@ export default function NewReportPage() {
             </div>
             <div>
               <Label
-                htmlFor="detail-activity"
+                htmlFor="content"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Detail Activity
+                Detail Aktivitas
               </Label>
               <Input
-                id="detail-activity"
+                id="content"
                 type="text"
                 placeholder="Masukkan Aktivitas"
-                {...register("detailActivity")}
+                {...register("content")}
               />
-              {errors.detailActivity && (
+              {errors.content && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.detailActivity.message}
+                  {errors.content.message}
                 </p>
               )}
             </div>
           </div>
           <div className="space-y-4">
             <Label className="text-dashboardTextPrimary font-semibold mb-2 block">
-              Upload Media
+              Unggah Media
             </Label>
             <UploadMediaCard
               onFileChange={handleFileChange}
@@ -230,7 +210,7 @@ export default function NewReportPage() {
             className="w-full h-[58px] rounded-[25px] bg-dashboardBlue text-[#FCD53F] text-lg shadow-md hover:bg-dashboardBlue/90"
             disabled={isPending}
           >
-            {isPending ? "Uploading..." : "Upload + 50 point"}
+            {isPending ? "Mengunggah..." : "Unggah + 50 poin"}
           </Button>
         </form>
       </main>

@@ -12,6 +12,7 @@ import {
   type ForgotPasswordFormSchema,
 } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const { toast } = useToast();
@@ -30,20 +31,10 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotPasswordFormSchema) => {
     console.log("Reset password data submitted:", data);
 
-    // Simulate API call
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.email === "notfound@example.com") {
-            // Simulasi error dari backend
-            reject({
-              message: "User not found",
-              errors: { email: ["Email tidak terdaftar."] },
-            });
-          } else {
-            resolve(true);
-          }
-        }, 1500);
+      await apiClient("/user/forgot-password", {
+        method: "POST",
+        body: { email: data.email, newPassword: data.newPassword },
       });
 
       toast({
@@ -95,7 +86,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
-            src="/images/gurujr-blue.svg"
+            src="/images/gurujr-blue.png"
             alt="Jasa Raharja Logo"
             width={160}
             height={125}

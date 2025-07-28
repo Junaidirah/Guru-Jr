@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupFormSchema, type SignupFormSchema } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { apiClient } from "@/lib/api";
 
 export default function SignUpPage() {
   const { toast } = useToast();
@@ -27,20 +28,15 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignupFormSchema) => {
     console.log("Signup data submitted:", data);
 
-    // Simulasi API call dengan kemungkinan error
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.email === "existing@example.com") {
-            // Simulasi error dari backend
-            reject({
-              message: "Email already used",
-              errors: { email: ["Email ini sudah terdaftar."] },
-            });
-          } else {
-            resolve(true);
-          }
-        }, 1500);
+      await apiClient("/user/register", {
+        method: "POST",
+        body: {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          schools: data.schools,
+        },
       });
 
       toast({
@@ -113,15 +109,15 @@ export default function SignUpPage() {
           </div>
           <div>
             <InputWithIcon
-              id="school"
+              id="schools"
               type="text"
               placeholder="School"
               icon="teenyicons:school-outline"
-              {...register("school")}
+              {...register("schools")}
             />
-            {errors.school && (
+            {errors.schools && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.school.message}
+                {errors.schools.message}
               </p>
             )}
           </div>
