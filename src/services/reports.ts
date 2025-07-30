@@ -22,7 +22,7 @@ export async function getReportHistory(
     }));
   } catch (error) {
     console.error("Gagal mengambil riwayat laporan:", error);
-    // Fallback ke data mock jika gagal
+
     return reportHistoryData.map((report) => ({
       ...report,
       date: new Date(report.createdAt).toLocaleDateString("id-ID", {
@@ -43,7 +43,7 @@ export async function getTotalReportsSubmitted(
     );
     return reports.length;
   } catch (error) {
-    console.error("Gagal mengambil total laporan yang diajukan:", error);
+    console.error("Failed to fetch total submitted reports:", error);
 
     return reportHistoryData.length;
   }

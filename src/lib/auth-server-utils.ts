@@ -24,7 +24,7 @@ export async function getServerCurrentUser(): Promise<UserData | null> {
     const user = await apiClient<UserData>("/user/me", { token: authToken });
     return user;
   } catch (error) {
-    console.error("Gagal mengambil data pengguna saat ini di server:", error);
+    console.error("Failed to fetch current user data on the server:", error);
     return null;
   }
 }

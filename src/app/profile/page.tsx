@@ -75,18 +75,18 @@ export default function ProfilePage() {
       }
 
       toast({
-        title: "Profil Diperbarui!",
-        description: "Informasi profil Anda telah disimpan.",
+        title: "Profile Updated!",
+        description: "Your profile information has been saved.",
         variant: "default",
       });
     } catch (error: unknown) {
-      console.error("Pembaruan profil gagal:", error);
+      console.error("Profile update failed:", error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Terjadi kesalahan tak terduga selama pembaruan profil.";
+          : "An unexpected error occurred during the profile update.";
       toast({
-        title: "Pembaruan Gagal",
+        title: "Update Failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -119,8 +119,8 @@ export default function ProfilePage() {
   const handleLogoutConfirm = async () => {
     logout();
     toast({
-      title: "Keluar",
-      description: "Anda telah berhasil keluar.",
+      title: "Logged Out",
+      description: "You have successfully logged out.",
       variant: "default",
     });
   };
@@ -128,7 +128,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-screenBackground flex flex-col items-center justify-center">
-        <p className="text-dashboardTextPrimary">Memuat profil...</p>
+        <p className="text-dashboardTextPrimary">Loading profile...</p>
       </div>
     );
   }
@@ -216,7 +216,7 @@ export default function ProfilePage() {
             onClick={handleSubmit(onSubmit)}
             disabled={!isDirty || !isValid || isSubmitting}
           >
-            {isSubmitting ? "Menyimpan..." : "Simpan"}
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </div>
 
@@ -227,26 +227,26 @@ export default function ProfilePage() {
                 type="button"
                 className="w-full h-[58px] rounded-[25px] bg-red-500 text-white text-lg font-light shadow-md hover:bg-red-600"
               >
-                Keluar
+                Log Out
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="text-dashboardTextPrimary">
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Apakah Anda yakin ingin keluar?
+                  Are you sure you want to log out?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  Anda akan keluar dari akun Anda. Anda bisa masuk kembali kapan
-                  saja.
+                  You will be logged out of your account. You can log back in at
+                  any time.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogoutConfirm}
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
-                  Keluar
+                  Log Out
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

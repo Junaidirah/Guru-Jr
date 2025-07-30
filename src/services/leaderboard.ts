@@ -6,7 +6,7 @@ import { apiClient } from "@/lib/api";
 
 export async function getLeaderboardData(): Promise<LeaderboardEntry[]> {
   try {
-    const response = await apiClient<LeaderboardEntry[]>("/leaderboard");
+    const response = await apiClient<LeaderboardEntry[]>("/user/leaderboard");
     return response;
   } catch (error) {
     console.error("Gagal mengambil data leaderboard:", error);

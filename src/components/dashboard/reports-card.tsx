@@ -24,7 +24,7 @@ export function ReportsCard() {
         const count = await getTotalReportsSubmitted(user.id);
         setReportsCount(count);
       } catch (err) {
-        setError("Gagal memuat jumlah laporan.");
+        setError("Failed to load report count.");
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -41,10 +41,10 @@ export function ReportsCard() {
       <div className="bg-dashboardHeaderBg rounded-3xl p-6 flex items-center justify-between shadow-card mx-4 text-center">
         <div className="flex flex-col items-center">
           <span className="text-sm text-dashboardTextSecondary">
-            Laporan Dikirim
+            Reports Submitted
           </span>
           <span className="text-4xl font-bold text-dashboardTextPrimary">
-            Memuat...
+            Loading...
           </span>
         </div>
         <Icon
@@ -59,8 +59,8 @@ export function ReportsCard() {
     return (
       <div className="bg-red-500 text-white rounded-3xl p-6 flex items-center justify-between shadow-card mx-4 text-center">
         <div className="flex flex-col items-center">
-          <span className="text-sm">Laporan Dikirim</span>
-          <span className="text-xl font-bold">Kesalahan!</span>
+          <span className="text-sm">Reports Submitted</span>
+          <span className="text-xl font-bold">Error!</span>
           <span className="text-xs font-light">{error}</span>
         </div>
         <Icon icon="basil:document-solid" className="w-24 h-24 text-white" />
@@ -72,7 +72,7 @@ export function ReportsCard() {
     <div className="bg-dashboardHeaderBg rounded-3xl p-6 flex items-center justify-between shadow-card mx-4">
       <div className="flex flex-col items-center">
         <span className="text-sm text-dashboardTextSecondary">
-          Laporan Dikirim
+          Reports Submitted
         </span>
         <span className="text-4xl font-bold text-dashboardTextPrimary">
           {reportsCount}
@@ -83,8 +83,8 @@ export function ReportsCard() {
             className="mt-4 rounded-full px-4 py-2 text-dashboardTextPrimary border-gray-200 hover:bg-gray-100 bg-[#fff]"
           >
             <Icon icon="tabler:plus" className="w-4 h-4 mr-2" />
-            Laporan Baru
-          </Button>
+            New Report
+          </Button> 
         </Link>
       </div>
 

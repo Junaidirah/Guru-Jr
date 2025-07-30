@@ -112,7 +112,7 @@ export default function NewReportPage() {
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      <TitleHeader title="Laporan Baru" />
+      <TitleHeader title="New Report" />
       <main className="flex-1 space-y-6 py-6 px-4">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
@@ -121,7 +121,7 @@ export default function NewReportPage() {
                 htmlFor="activity"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Aktivitas
+                Activity
               </Label>
               <Input
                 id="activity"
@@ -140,7 +140,7 @@ export default function NewReportPage() {
                 htmlFor="location"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Lokasi
+                Location
               </Label>
               <Input
                 id="location"
@@ -159,12 +159,12 @@ export default function NewReportPage() {
                 htmlFor="content"
                 className="text-dashboardTextPrimary font-semibold mb-2 block"
               >
-                Detail Aktivitas
+                Detail Activity
               </Label>
               <Input
                 id="content"
                 type="text"
-                placeholder="Masukkan Aktivitas"
+                placeholder="Masukkan Activity"
                 {...register("content")}
               />
               {errors.content && (
@@ -176,7 +176,7 @@ export default function NewReportPage() {
           </div>
           <div className="space-y-4">
             <Label className="text-dashboardTextPrimary font-semibold mb-2 block">
-              Unggah Media
+              Upload Media
             </Label>
             <UploadMediaCard
               onFileChange={handleFileChange}
@@ -210,7 +210,7 @@ export default function NewReportPage() {
             className="w-full h-[58px] rounded-[25px] bg-dashboardBlue text-[#FCD53F] text-lg shadow-md hover:bg-dashboardBlue/90"
             disabled={isPending}
           >
-            {isPending ? "Mengunggah..." : "Unggah + 50 poin"}
+            {isPending ? "Uploading..." : "Upload + 50 points"}
           </Button>
         </form>
       </main>

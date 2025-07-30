@@ -29,29 +29,29 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormSchema) => {
-    console.log("Data login dikirim:", data);
+    console.log("Login data submitted:", data);
 
     try {
-      const response = await apiClient<{ token: string }>("/user/login", {
+      const response = await apiClient<{ accessToken: string }>("/user/login", {
         method: "POST",
         body: data,
       });
 
-      await login(response.token);
+      await login(response.accessToken);
       toast({
-        title: "Login Berhasil!",
-        description: "Anda telah berhasil masuk.",
+        title: "Login Successful!",
+        description: "You have successfully logged in.",
         variant: "default",
       });
       router.push("/dashboard");
       reset();
     } catch (error: unknown) {
-      console.error("Login gagal:", error);
+      console.error("Login failed:", error);
       const errorMessage =
         (error as { message?: string })?.message ||
-        "Terjadi kesalahan tak terduga.";
+        "An unexpected error occurred.";
       toast({
-        title: "Login Gagal",
+        title: "Login Failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -92,7 +92,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
-            src="/images/gurujr-blue.png"
+            src="/images/gurujr-blue.svg"
             alt="Jasa Raharja Logo"
             width={160}
             height={125}

@@ -32,12 +32,8 @@ export type NewReportFormSchema = z.infer<typeof newReportSchema>;
 
 export const profileFormSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter."),
-  schools: z.string().min(2, "Sekolah minimal 2 karakter."),
-  email: z
-    .string()
-    .min(1, "Email tidak boleh kosong.")
-    .email("Format email tidak valid."),
-
+  schools: z.string().optional(),
+  email: z.string().optional(),
   password: z.string().optional(),
 });
 

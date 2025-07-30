@@ -44,7 +44,7 @@ export async function uploadReport(
     console.error("Validation failed on server:", parsed.error);
     return {
       success: false,
-      message: "Validasi gagal. Periksa kembali input Anda.",
+      message: "Validation failed. Please check your input.",
       errors: errors,
     };
   }
@@ -57,7 +57,7 @@ export async function uploadReport(
   if (!authToken) {
     return {
       success: false,
-      message: "Pengguna tidak terotentikasi. Silakan masuk kembali.",
+      message: "You're not logged in. Please sign in again to continue.",
     };
   }
 
@@ -78,10 +78,13 @@ export async function uploadReport(
 
     revalidatePath("/activity/report-history");
     revalidatePath("/dashboard");
-    return { success: true, message: "Laporan berhasil dikirim! +50 poin" };
+    return {
+      success: true,
+      message: "Report submitted successfully! +50 points",
+    };
   } catch (error: unknown) {
     console.error("Failed to upload report:", error);
-    let errorMessage = "Gagal mengirim laporan. Silakan coba lagi.";
+    let errorMessage = "Failed to submit the report. Please try again.";
     let errors: Record<string, string[]> | undefined = undefined;
 
     if (error instanceof Error) {

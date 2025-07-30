@@ -58,6 +58,8 @@ export async function apiClient<T>(
     isFormData?: boolean;
   } = {}
 ): Promise<T> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   const authToken = token || getClientAuthToken();
 
   const config: RequestInit = {

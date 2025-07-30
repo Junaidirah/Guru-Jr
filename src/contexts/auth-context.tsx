@@ -46,9 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userData);
       setError(null);
     } catch (err) {
-      console.error("Gagal mengambil data pengguna:", err);
+      console.error("Failed to fetch user data:", err);
       setUser(null);
-      setError("Gagal memuat data pengguna.");
+      setError("Failed to load user data.");
       removeAuthToken();
       router.push("/login");
     } finally {

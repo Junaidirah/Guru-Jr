@@ -16,7 +16,7 @@ export function DashboardHeader() {
       <div className="text-dashboardTextPrimary">
         <h1 className="text-2xl font-bold">Hello {user?.name || "Guest"}</h1>
         <p className="text-sm text-dashboardTextSecondary">
-          Senang bertemu Anda lagi!
+          Great to see you again !
         </p>
       </div>
       <button

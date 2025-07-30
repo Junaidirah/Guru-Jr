@@ -9,7 +9,7 @@ export function TotalPointCard() {
   if (isLoading) {
     return (
       <div className="relative bg-dashboardTotalPointsBg text-white rounded-[10px] h-[80px] mx-4 flex flex-col items-center justify-center shadow-card">
-        <span className="text-xl font-bold">Memuat...</span>
+        <span className="text-xl font-bold">Loading...</span>
       </div>
     );
   }
@@ -17,7 +17,7 @@ export function TotalPointCard() {
   if (error || !user) {
     return (
       <div className="relative bg-red-500 text-white rounded-[10px] h-[80px] mx-4 flex flex-col items-center justify-center shadow-card">
-        <span className="text-xl font-bold">Kesalahan!</span>
+        <span className="text-xl font-bold">Error!</span>
         <span className="text-xs font-light">
           {error || "Data pengguna tidak tersedia."}
         </span>
@@ -38,7 +38,7 @@ export function TotalPointCard() {
         color="#FCD53F"
       />
       <span className="text-4xl font-bold">{user.points}</span>{" "}
-      <span className="text-xs font-light">Total Poin</span>
+      <span className="text-xs font-light">Total Point</span>
     </div>
   );
 }

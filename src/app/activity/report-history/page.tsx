@@ -16,22 +16,22 @@ export default async function ReportHistoryPage() {
       userId = currentUser.id;
       reports = await getReportHistory(userId);
     } else {
-      error = "Pengguna tidak terotentikasi. Silakan masuk.";
+      error = "User not authenticated. Please log in.";
     }
   } catch (e) {
-    console.error("Gagal memuat riwayat laporan:", e);
-    error = "Gagal memuat riwayat laporan.";
+    console.error("Failed to load report history:", e);
+    error = "Failed to load report history.";
   }
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      <TitleHeader title="Riwayat Laporan" />
+      <TitleHeader title="History Report" />
       <main className="flex-1 space-y-4 py-6 px-4">
         {error ? (
           <div className="text-red-500 text-center mt-4">{error}</div>
         ) : reports.length === 0 ? (
           <div className="text-dashboardTextSecondary text-center mt-4">
-            Tidak ada laporan ditemukan.
+            No reports found.
           </div>
         ) : (
           reports.map((report) => (

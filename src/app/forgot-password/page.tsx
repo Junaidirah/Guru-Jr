@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-sm mx-auto space-y-8">
         <div className="space-y-6">
           <Image
-            src="/images/gurujr-blue.png"
+            src="/images/gurujr-blue.svg"
             alt="Jasa Raharja Logo"
             width={160}
             height={125}
@@ -103,41 +103,46 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <InputWithIcon
-              id="email"
-              type="email"
-              placeholder="Email"
-              icon="ic:outline-email"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.email.message}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-6 pb-16">
+            <div>
+              <InputWithIcon
+                id="email"
+                type="email"
+                placeholder="Email"
+                icon="ic:outline-email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <InputWithIcon
+                id="newPassword"
+                type="password"
+                placeholder="New Password"
+                icon="mdi:password-outline"
+                showPasswordToggle
+                {...register("newPassword")}
+              />
+              {errors.newPassword && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.newPassword.message}
+                </p>
+              )}
+            </div>
+
+            {errors.root?.serverError && (
+              <p className="text-red-500 text-sm text-center mt-1">
+                {errors.root.serverError.message}
               </p>
             )}
           </div>
-          <div>
-            <InputWithIcon
-              id="newPassword"
-              type="password"
-              placeholder="New Password"
-              icon="mdi:password-outline"
-              showPasswordToggle
-              {...register("newPassword")}
-            />
-            {errors.newPassword && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.newPassword.message}
-              </p>
-            )}
-          </div>
-          {errors.root?.serverError && (
-            <p className="text-red-500 text-sm text-center mt-1">
-              {errors.root.serverError.message}
-            </p>
-          )}
+
           <Button
             type="submit"
             className="w-full h-[58px] rounded-[25px] bg-primary-button font-light text-white text-lg shadow-md hover:bg-primary-button/90"

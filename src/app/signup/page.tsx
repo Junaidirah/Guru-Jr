@@ -94,76 +94,81 @@ export default function SignUpPage() {
             Please register for login
           </p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-10">
-          <div>
-            <InputWithIcon
-              id="name"
-              type="text"
-              placeholder="Name"
-              icon="material-symbols:person-rounded"
-              {...register("name")}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="schools"
-              type="text"
-              placeholder="School"
-              icon="teenyicons:school-outline"
-              {...register("schools")}
-            />
-            {errors.schools && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.schools.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="email"
-              type="email"
-              placeholder="Email"
-              icon="ic:outline-email"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="password"
-              type="password"
-              placeholder="Password"
-              icon="mdi:password-outline"
-              showPasswordToggle
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-        </form>
-        {errors.root?.serverError && (
-          <p className="text-red-500 text-sm text-center mt-1">
-            {errors.root.serverError.message}
-          </p>
-        )}
-        <Button
-          type="submit"
-          className="w-full h-[58px] rounded-[25px] bg-primary-button text-white text-lg font-light shadow-md hover:bg-primary-button/90"
-          disabled={isSubmitting || !isValid}
-        >
-          {isSubmitting ? "Signing Up..." : "Sign Up"}
-        </Button>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-6 pb-10">
+            <div>
+              <InputWithIcon
+                id="name"
+                type="text"
+                placeholder="Name"
+                icon="material-symbols:person-rounded"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="schools"
+                type="text"
+                placeholder="School"
+                icon="teenyicons:school-outline"
+                {...register("schools")}
+              />
+              {errors.schools && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.schools.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="email"
+                type="email"
+                placeholder="Email"
+                icon="ic:outline-email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="password"
+                type="password"
+                placeholder="Password"
+                icon="mdi:password-outline"
+                showPasswordToggle
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
+            {errors.root?.serverError && (
+              <p className="text-red-500 text-sm text-center mt-1">
+                {errors.root.serverError.message}
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-[58px] rounded-[25px] bg-primary-button text-white text-lg font-light shadow-md hover:bg-primary-button/90"
+            disabled={isSubmitting || !isValid}
+          >
+            {isSubmitting ? "Signing Up..." : "Sign Up"}
+          </Button>
+        </form>
         <div className="text-center text-sm text-black">
           Have an account?{" "}
           <Link

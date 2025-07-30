@@ -101,7 +101,7 @@ export function UploadMediaCard({
         />
       )}
       <span className="text-sm text-gray-400 font-light">
-        {file ? file.name : "unggah media"}
+        {file ? file.name : "upload media"}
       </span>
       <Input
         id="media"
@@ -121,7 +121,7 @@ export function UploadMediaCard({
         variant="outline"
         className="rounded-[10px] px-6 py-2 text-screenBackground border-gray-200 hover:bg-dashboardBlue bg-[#77A7D1]"
       >
-        Unggah
+        Upload
       </Button>
     </div>
   );
