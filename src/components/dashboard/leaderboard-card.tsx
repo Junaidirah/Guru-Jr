@@ -21,7 +21,7 @@ export function LeaderboardCard() {
         setLeaderboardData(data);
       } catch (err) {
         setError("Failed to load leaderboard data.");
-        console.error(err);
+        console.error("Gagal mengambil data leaderboard:", err);
       } finally {
         setIsLoading(false);
       }
