@@ -2,25 +2,15 @@ import {
   leaderboardData,
   type LeaderboardEntry,
 } from "@/data/leaderboard-data";
+import { apiClient } from "@/lib/api";
 
-/**
- * Mengambil data leaderboard.
- * fungsi ini akan mengambil data dari API backend.
- */
 export async function getLeaderboardData(): Promise<LeaderboardEntry[]> {
-  // Simulasi penundaan jaringan
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  try {
+    const response = await apiClient<LeaderboardEntry[]>("/user/leaderboard");
+    return response;
+  } catch (error) {
+    console.error("Gagal mengambil data leaderboard:", error);
 
-  // Saat ini mengembalikan data mock
-  return leaderboardData;
-
-  // Contoh bagaimana ini akan berubah untuk integrasi backend:
-  /*
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leaderboard`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch leaderboard data');
+    return leaderboardData;
   }
-  const data = await response.json();
-  return data;
-  */
 }

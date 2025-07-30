@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { newReportSchema } from "@/lib/schemas";
+import { apiClient } from "@/lib/api";
+import { cookies } from "next/headers";
+import type { ApiError } from "@/lib/api";
 
 export interface UploadReportState {
   success: boolean;
@@ -13,10 +16,9 @@ export async function uploadReport(
   prevState: UploadReportState | null,
   formData: FormData
 ): Promise<UploadReportState> {
-  const date = formData.get("date");
   const activity = formData.get("activity");
   const location = formData.get("location");
-  const detailActivity = formData.get("detailActivity");
+  const content = formData.get("content");
   const mediaFile = formData.get("media");
 
   console.log("Server Action: uploadReport received formData.");
@@ -31,10 +33,9 @@ export async function uploadReport(
   }
 
   const parsed = newReportSchema.safeParse({
-    date,
     activity,
     location,
-    detailActivity,
+    content,
     media: mediaFile,
   });
 
@@ -43,32 +44,64 @@ export async function uploadReport(
     console.error("Validation failed on server:", parsed.error);
     return {
       success: false,
-      message: "Validasi gagal. Periksa kembali input Anda.",
+      message: "Validation failed. Please check your input.",
       errors: errors,
     };
   }
 
   const { data } = parsed;
 
-  if (data.media) {
-    console.log(
-      `Uploading file: ${data.media.name}, type: ${data.media.type}, size: ${data.media.size} bytes`
-    );
-  } else {
-    console.log("No media file uploaded.");
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("authToken")?.value || null;
+
+  if (!authToken) {
+    return {
+      success: false,
+      message: "You're not logged in. Please sign in again to continue.",
+    };
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  try {
+    await apiClient("/report", {
+      method: "POST",
+      body: formData,
+      isFormData: true,
+      token: authToken,
+    });
 
-  console.log({
-    date: data.date,
-    activity: data.activity,
-    location: data.location,
-    detailActivity: data.detailActivity,
-    mediaFileName: data.media ? data.media.name : "No file",
-  });
+    console.log({
+      activity: data.activity,
+      location: data.location,
+      content: data.content,
+      mediaFileName: data.media ? data.media.name : "No file",
+    });
 
-  revalidatePath("/activity/report-history");
+    revalidatePath("/activity/report-history");
+    revalidatePath("/dashboard");
+    return {
+      success: true,
+      message: "Report submitted successfully! +50 points",
+    };
+  } catch (error: unknown) {
+    console.error("Failed to upload report:", error);
+    let errorMessage = "Failed to submit the report. Please try again.";
+    let errors: Record<string, string[]> | undefined = undefined;
 
-  return { success: true, message: "Laporan berhasil dikirim! +50 poin" };
+    if (error instanceof Error) {
+      errorMessage = error.message;
+
+      if (
+        typeof (error as ApiError).errors === "object" &&
+        (error as ApiError).errors !== null
+      ) {
+        errors = (error as ApiError).errors;
+      }
+    }
+
+    return {
+      success: false,
+      message: errorMessage,
+      errors: errors,
+    };
+  }
 }

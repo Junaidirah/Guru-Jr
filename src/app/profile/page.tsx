@@ -1,22 +1,16 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import type React from "react";
-import { useRouter } from "next/navigation";
-
+import { useEffect } from "react";
 import { TitleHeader } from "@/components/layout/title-header";
 import { BottomNavigation } from "@/components/layout/bottom-navigation";
 import { InputWithIcon } from "@/components/ui/inputIcon";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Icon } from "@iconify/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileFormSchema, type ProfileFormSchema } from "@/lib/schemas";
-
-import { useProfileImage } from "@/contexts/profile-image-context";
-import { logout } from "./actions";
+import { useAuth } from "@/contexts/auth-context";
 import { useToast } from "@/hooks/use-toast";
-import { getCurrentUser } from "@/services/user";
+import { apiClient } from "@/lib/api";
 
 import {
   AlertDialog,
@@ -31,14 +25,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function ProfilePage() {
-  const { profileImageUrl, setProfileImageUrl } = useProfileImage();
   const { toast } = useToast();
-  const router = useRouter();
-
-  const [initialUserData, setInitialUserData] =
-    useState<ProfileFormSchema | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const [userError, setUserError] = useState<string | null>(null);
+  const { user, isLoading, error, setUser, logout } = useAuth();
 
   const {
     register,
@@ -48,86 +36,44 @@ export default function ProfilePage() {
     setError,
   } = useForm<ProfileFormSchema>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: initialUserData || undefined,
+    defaultValues: user
+      ? {
+          name: user.name,
+          schools: user.schools,
+          email: user.email,
+          password: "",
+        }
+      : undefined,
     mode: "onChange",
   });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setIsLoadingUser(true);
-        const user = await getCurrentUser();
-        setInitialUserData(user);
-        reset(user);
-      } catch (err) {
-        setUserError("Failed to load user data.");
-        console.error(err);
-        toast({
-          title: "Error",
-          description: "Failed to load profile data.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingUser(false);
-      }
-    };
-    fetchUser();
-  }, [reset, toast]);
-
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [currentPreviewUrl, setCurrentPreviewUrl] = useState<string | null>(
-    profileImageUrl
-  );
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (profileImageFile) {
-      const url = URL.createObjectURL(profileImageFile);
-      setCurrentPreviewUrl(url);
-      return () => URL.revokeObjectURL(url);
-    } else {
-      setCurrentPreviewUrl(profileImageUrl);
+    if (user) {
+      reset({
+        name: user.name,
+        schools: user.schools,
+        email: user.email,
+        password: "",
+      });
     }
-  }, [profileImageFile, profileImageUrl]);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setProfileImageFile(event.target.files[0]);
-    } else {
-      setProfileImageFile(null);
-    }
-  };
-
-  const handleAddButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  }, [user, reset]);
 
   const onSubmit = async (data: ProfileFormSchema) => {
-    console.log("Profile update submitted:", data);
-    // Simulasi API call untuk update profile
+    console.log("Pembaruan profil dikirim:", data);
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.name === "ErrorName") {
-            // Simulasi error
-            reject({
-              message: "Failed to update profile",
-              errors: { name: ["Nama tidak valid."] },
-            });
-          } else {
-            resolve(true);
-          }
-        }, 1500);
-      });
-
-      if (profileImageFile) {
-        console.log("New profile image:", profileImageFile.name);
-        console.log(
-          "Untuk persistensi, gambar ini perlu diunggah ke backend dan URL permanennya disimpan."
-        );
+      const updatePayload: { name?: string } = {};
+      if (user && data.name !== user.name) {
+        updatePayload.name = data.name;
       }
-      reset(data);
-      setProfileImageUrl(currentPreviewUrl || "/placeholder.svg");
+
+      if (Object.keys(updatePayload).length > 0) {
+        const updatedUser = await apiClient<typeof user>("/user/update", {
+          method: "PATCH",
+          body: updatePayload,
+        });
+        setUser(updatedUser);
+      }
+
       toast({
         title: "Profile Updated!",
         description: "Your profile information has been saved.",
@@ -136,8 +82,9 @@ export default function ProfilePage() {
     } catch (error: unknown) {
       console.error("Profile update failed:", error);
       const errorMessage =
-        (error as { message?: string })?.message ||
-        "An unexpected error occurred during profile update.";
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred during the profile update.";
       toast({
         title: "Update Failed",
         description: errorMessage,
@@ -170,27 +117,15 @@ export default function ProfilePage() {
   };
 
   const handleLogoutConfirm = async () => {
-    const result = await logout();
-
-    if (result.success) {
-      toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out.",
-        variant: "default",
-      });
-      setTimeout(() => {
-        router.push("/login");
-      }, 300);
-    } else {
-      toast({
-        title: "Logout Failed",
-        description: result.message || "An error occurred during logout.",
-        variant: "destructive",
-      });
-    }
+    logout();
+    toast({
+      title: "Logged Out",
+      description: "You have successfully logged out.",
+      variant: "default",
+    });
   };
 
-  if (isLoadingUser) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-screenBackground flex flex-col items-center justify-center">
         <p className="text-dashboardTextPrimary">Loading profile...</p>
@@ -198,42 +133,28 @@ export default function ProfilePage() {
     );
   }
 
-  if (userError) {
+  if (error || !user) {
     return (
       <div className="min-h-screen bg-screenBackground flex flex-col items-center justify-center">
-        <p className="text-red-500">Error: {userError}</p>
+        <p className="text-red-500">
+          Kesalahan: {error || "Data pengguna tidak tersedia."}
+        </p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-screenBackground flex flex-col pb-20">
-      <TitleHeader title="Profile" />
+      <TitleHeader title="Profil" />
       <main className="flex-1 space-y-6 py-6 px-4 flex flex-col items-center">
         <div className="relative mb-8 mt-4">
           <Avatar className="w-32 h-32 border-4 border-white shadow-md">
             <AvatarImage
-              src={currentPreviewUrl || "/placeholder.svg"}
-              alt="User Avatar"
-            />
+              src={user.image || "/placeholder.svg"}
+              alt="Avatar Pengguna"
+            />{" "}
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <button
-            type="button"
-            onClick={handleAddButtonClick}
-            className="absolute bottom-0 right-0 bg-dashboardBlue text-white rounded-full p-2 shadow-md"
-            aria-label="Change profile picture"
-          >
-            <Icon icon="material-symbols:add-rounded" className="w-6 h-6" />
-          </button>
-
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageChange}
-            className="hidden"
-            accept="image/jpeg,image/png,image/webp"
-          />
         </div>
 
         <div className="w-full max-w-sm space-y-4">
@@ -252,15 +173,16 @@ export default function ProfilePage() {
 
           <div>
             <InputWithIcon
-              id="school"
+              id="schools"
               type="text"
               placeholder="Masukkan Sekolah"
               icon="teenyicons:school-outline"
-              {...register("school")}
+              {...register("schools")}
+              disabled
             />
-            {errors.school && (
+            {errors.schools && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.school.message}
+                {errors.schools.message}
               </p>
             )}
           </div>
@@ -272,26 +194,11 @@ export default function ProfilePage() {
               placeholder="Masukkan Email"
               icon="ic:outline-email"
               {...register("email")}
+              disabled
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <InputWithIcon
-              id="password"
-              type="password"
-              placeholder="*****"
-              icon="mdi:password-outline"
-              showPasswordToggle
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
               </p>
             )}
           </div>
@@ -307,9 +214,7 @@ export default function ProfilePage() {
             type="submit"
             className="w-full h-[58px] rounded-[25px] bg-dashboardBlue text-white text-lg font-light shadow-md hover:bg-dashboardBlue/90"
             onClick={handleSubmit(onSubmit)}
-            disabled={
-              (!isDirty && !profileImageFile) || !isValid || isSubmitting
-            }
+            disabled={!isDirty || !isValid || isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>
@@ -328,20 +233,20 @@ export default function ProfilePage() {
             <AlertDialogContent className="text-dashboardTextPrimary">
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Apakah Anda yakin ingin keluar?
+                  Are you sure you want to log out?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  Anda akan keluar dari akun Anda. Anda bisa masuk kembali kapan
-                  saja.
+                  You will be logged out of your account. You can log back in at
+                  any time.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogoutConfirm}
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
-                  Keluar
+                  Log Out
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

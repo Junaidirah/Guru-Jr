@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupFormSchema, type SignupFormSchema } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { apiClient } from "@/lib/api";
 
 export default function SignUpPage() {
   const { toast } = useToast();
@@ -27,20 +28,15 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignupFormSchema) => {
     console.log("Signup data submitted:", data);
 
-    // Simulasi API call dengan kemungkinan error
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.email === "existing@example.com") {
-            // Simulasi error dari backend
-            reject({
-              message: "Email already used",
-              errors: { email: ["Email ini sudah terdaftar."] },
-            });
-          } else {
-            resolve(true);
-          }
-        }, 1500);
+      await apiClient("/user/register", {
+        method: "POST",
+        body: {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          schools: data.schools,
+        },
       });
 
       toast({
@@ -98,76 +94,81 @@ export default function SignUpPage() {
             Please register for login
           </p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-10">
-          <div>
-            <InputWithIcon
-              id="name"
-              type="text"
-              placeholder="Name"
-              icon="material-symbols:person-rounded"
-              {...register("name")}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="school"
-              type="text"
-              placeholder="School"
-              icon="teenyicons:school-outline"
-              {...register("school")}
-            />
-            {errors.school && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.school.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="email"
-              type="email"
-              placeholder="Email"
-              icon="ic:outline-email"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <InputWithIcon
-              id="password"
-              type="password"
-              placeholder="Password"
-              icon="mdi:password-outline"
-              showPasswordToggle
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-        </form>
-        {errors.root?.serverError && (
-          <p className="text-red-500 text-sm text-center mt-1">
-            {errors.root.serverError.message}
-          </p>
-        )}
-        <Button
-          type="submit"
-          className="w-full h-[58px] rounded-[25px] bg-primary-button text-white text-lg font-light shadow-md hover:bg-primary-button/90"
-          disabled={isSubmitting || !isValid}
-        >
-          {isSubmitting ? "Signing Up..." : "Sign Up"}
-        </Button>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-6 pb-10">
+            <div>
+              <InputWithIcon
+                id="name"
+                type="text"
+                placeholder="Name"
+                icon="material-symbols:person-rounded"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="schools"
+                type="text"
+                placeholder="School"
+                icon="teenyicons:school-outline"
+                {...register("schools")}
+              />
+              {errors.schools && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.schools.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="email"
+                type="email"
+                placeholder="Email"
+                icon="ic:outline-email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <InputWithIcon
+                id="password"
+                type="password"
+                placeholder="Password"
+                icon="mdi:password-outline"
+                showPasswordToggle
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
+            {errors.root?.serverError && (
+              <p className="text-red-500 text-sm text-center mt-1">
+                {errors.root.serverError.message}
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-[58px] rounded-[25px] bg-primary-button text-white text-lg font-light shadow-md hover:bg-primary-button/90"
+            disabled={isSubmitting || !isValid}
+          >
+            {isSubmitting ? "Signing Up..." : "Sign Up"}
+          </Button>
+        </form>
         <div className="text-center text-sm text-black">
           Have an account?{" "}
           <Link

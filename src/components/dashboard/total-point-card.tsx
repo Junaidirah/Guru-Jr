@@ -1,29 +1,10 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
-import { getTotalPoints } from "@/services/total-points";
+import { useAuth } from "@/contexts/auth-context";
 
 export function TotalPointCard() {
-  const [totalPoints, setTotalPoints] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTotalPoints = async () => {
-      try {
-        setIsLoading(true);
-        const points = await getTotalPoints();
-        setTotalPoints(points);
-      } catch (err) {
-        setError("Failed to load total points.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchTotalPoints();
-  }, []);
+  const { user, isLoading, error } = useAuth();
 
   if (isLoading) {
     return (
@@ -33,11 +14,13 @@ export function TotalPointCard() {
     );
   }
 
-  if (error) {
+  if (error || !user) {
     return (
       <div className="relative bg-red-500 text-white rounded-[10px] h-[80px] mx-4 flex flex-col items-center justify-center shadow-card">
         <span className="text-xl font-bold">Error!</span>
-        <span className="text-xs font-light">{error}</span>
+        <span className="text-xs font-light">
+          {error || "Data pengguna tidak tersedia."}
+        </span>
       </div>
     );
   }
@@ -54,7 +37,7 @@ export function TotalPointCard() {
         className="absolute w-8 h-8 text-dashboardStarYellow top-[60px] right-[40px] rotate-[18.19deg]"
         color="#FCD53F"
       />
-      <span className="text-4xl font-bold">{totalPoints}</span>
+      <span className="text-4xl font-bold">{user.points}</span>{" "}
       <span className="text-xs font-light">Total Point</span>
     </div>
   );

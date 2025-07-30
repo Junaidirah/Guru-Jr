@@ -2,47 +2,49 @@ import {
   reportHistoryData,
   type ReportHistoryEntry,
 } from "@/data/report-history";
+import { apiClient } from "@/lib/api";
 
-/**
- * Mengambil riwayat laporan aktivitas.
- * fungsi ini akan mengambil data dari API backend.
- */
-export async function getReportHistory(): Promise<ReportHistoryEntry[]> {
-  // Simulasi penundaan jaringan
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export async function getReportHistory(
+  userId: string
+): Promise<ReportHistoryEntry[]> {
+  try {
+    const reports = await apiClient<ReportHistoryEntry[]>(
+      `/report?userId=${userId}`
+    );
 
-  // Saat ini mengembalikan data mock
-  return reportHistoryData;
+    return reports.map((report) => ({
+      ...report,
+      date: new Date(report.createdAt).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+    }));
+  } catch (error) {
+    console.error("Gagal mengambil riwayat laporan:", error);
 
-  // Contoh :
-  /*
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/report-history`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch report history');
+    return reportHistoryData.map((report) => ({
+      ...report,
+      date: new Date(report.createdAt).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+    }));
   }
-  const data = await response.json();
-  return data;
-  */
 }
 
-/**
- * Mengambil jumlah total laporan yang diajukan.
- * Fungsi ini akan mengambil data dari API backend.
- */
-export async function getTotalReportsSubmitted(): Promise<number> {
-  // Simulasi penundaan jaringan
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export async function getTotalReportsSubmitted(
+  userId: string
+): Promise<number> {
+  try {
+    const reports = await apiClient<ReportHistoryEntry[]>(
+      `/report?userId=${userId}`
+    );
+    return reports.length;
+  } catch (error) {
+    console.error("Failed to fetch total submitted reports:", error);
 
-  // Saat ini mengembalikan data mock (misalnya, jumlah laporan dari data history)
-  return reportHistoryData.length;
-
-  // Contoh :
-  /*
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/reports/count`); // Asumsi ada endpoint ini
-  if (!response.ok) {
-    throw new Error('Failed to fetch total reports submitted');
+    return reportHistoryData.length;
   }
-  const data = await response.json();
-  return data.count;
-  */
 }

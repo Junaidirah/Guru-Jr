@@ -9,10 +9,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema, type LoginFormSchema } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const {
     register,
@@ -28,33 +31,16 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormSchema) => {
     console.log("Login data submitted:", data);
 
-    // Simulasi API call dengan kemungkinan error
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (data.email === "error@example.com") {
-            // Simulasi error dari backend
-            reject({
-              message: "Invalid credentials",
-              errors: { email: ["Email atau password salah."] },
-            });
-          } else if (
-            data.email === "user@example.com" &&
-            data.password === "password123"
-          ) {
-            resolve(true);
-          } else {
-            reject({
-              message: "Invalid credentials",
-              errors: { root: ["Email atau password salah."] },
-            });
-          }
-        }, 1500);
+      const response = await apiClient<{ accessToken: string }>("/user/login", {
+        method: "POST",
+        body: data,
       });
 
+      await login(response.accessToken);
       toast({
         title: "Login Successful!",
-        description: "You have been successfully logged in.",
+        description: "You have successfully logged in.",
         variant: "default",
       });
       router.push("/dashboard");
@@ -92,6 +78,11 @@ export default function LoginPage() {
             });
           }
         }
+      } else {
+        setError("email", {
+          type: "server",
+          message: errorMessage,
+        });
       }
     }
   };

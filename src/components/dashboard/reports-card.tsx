@@ -5,34 +5,41 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { getTotalReportsSubmitted } from "@/services/reports";
+import { useAuth } from "@/contexts/auth-context";
 
 export function ReportsCard() {
   const [reportsCount, setReportsCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, isLoading: isLoadingAuth } = useAuth();
 
   useEffect(() => {
     const fetchReportsCount = async () => {
+      if (!user?.id) {
+        setIsLoading(false);
+        return;
+      }
       try {
         setIsLoading(true);
-        const count = await getTotalReportsSubmitted();
+        const count = await getTotalReportsSubmitted(user.id);
         setReportsCount(count);
       } catch (err) {
-        setError("Failed to load reports count.");
+        setError("Failed to load report count.");
         console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchReportsCount();
-  }, []);
 
-  if (isLoading) {
+    if (!isLoadingAuth && user?.id) {
+      fetchReportsCount();
+    }
+  }, [user?.id, isLoadingAuth]);
+
+  if (isLoading || isLoadingAuth) {
     return (
       <div className="bg-dashboardHeaderBg rounded-3xl p-6 flex items-center justify-between shadow-card mx-4 text-center">
         <div className="flex flex-col items-center">
-          {" "}
-          {/* Added items-center */}
           <span className="text-sm text-dashboardTextSecondary">
             Reports Submitted
           </span>
@@ -52,7 +59,6 @@ export function ReportsCard() {
     return (
       <div className="bg-red-500 text-white rounded-3xl p-6 flex items-center justify-between shadow-card mx-4 text-center">
         <div className="flex flex-col items-center">
-          {" "}
           <span className="text-sm">Reports Submitted</span>
           <span className="text-xl font-bold">Error!</span>
           <span className="text-xs font-light">{error}</span>
@@ -65,8 +71,6 @@ export function ReportsCard() {
   return (
     <div className="bg-dashboardHeaderBg rounded-3xl p-6 flex items-center justify-between shadow-card mx-4">
       <div className="flex flex-col items-center">
-        {" "}
-        {/* Added items-center */}
         <span className="text-sm text-dashboardTextSecondary">
           Reports Submitted
         </span>
@@ -80,7 +84,7 @@ export function ReportsCard() {
           >
             <Icon icon="tabler:plus" className="w-4 h-4 mr-2" />
             New Report
-          </Button>
+          </Button> 
         </Link>
       </div>
 

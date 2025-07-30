@@ -26,7 +26,14 @@ export function UploadMediaCard({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
@@ -38,8 +45,9 @@ export function UploadMediaCard({
     if (selectedFile) {
       if (!allowedTypes.includes(selectedFile.type)) {
         toast({
-          title: "Invalid File Type",
-          description: "Only JPG, PNG, or WEBP formats are allowed.",
+          title: "Jenis File Tidak Valid",
+          description:
+            "Hanya format JPG, PNG, WEBP, PDF, DOC, atau DOCX yang diizinkan.",
           variant: "destructive",
         });
 
@@ -55,16 +63,28 @@ export function UploadMediaCard({
     register.onChange(event);
   };
 
+  const isImageFile = (fileType: string | null) =>
+    fileType?.startsWith("image/");
+
   return (
     <div className="bg-white rounded-[25px] p-6 shadow-around flex flex-col items-center justify-center text-center space-y-4 min-h-[200px]">
-      {previewUrl ? (
+      {previewUrl && file ? (
         <div className="relative w-full h-64 rounded-lg overflow-hidden group flex items-center justify-center">
-          <Image
-            src={previewUrl || "/placeholder.svg"}
-            alt="Media Preview"
-            layout="fill"
-            objectFit="contain"
-          />
+          {isImageFile(file.type) ? (
+            <Image
+              src={previewUrl || "/placeholder.svg"}
+              alt="Pratinjau Media"
+              layout="fill"
+              objectFit="contain"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-500">
+              <Icon icon="solar:document-bold" className="w-24 h-24" />
+              <span className="mt-2 text-sm font-medium text-center break-all px-4">
+                {file.name}
+              </span>
+            </div>
+          )}
           <Button
             type="button"
             onClick={onClearPreview}
@@ -93,7 +113,7 @@ export function UploadMediaCard({
         }}
         onChange={handleFileChange}
         className="hidden"
-        accept="image/jpeg,image/png,image/webp"
+        accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       />
       <Button
         type="button"
