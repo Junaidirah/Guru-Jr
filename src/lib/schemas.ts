@@ -15,12 +15,11 @@ export const newReportSchema = z.object({
         [
           "image/jpeg",
           "image/png",
-          "image/webp",
           "application/pdf",
           "application/msword",
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ].includes(file.type),
-      "Hanya format JPG, PNG, WEBP, PDF, DOC, atau DOCX yang diizinkan."
+      "Hanya format JPG, PNG, PDF, DOC, atau DOCX yang diizinkan."
     )
     .refine(
       (file) => file === undefined || file.size <= 10 * 1024 * 1024,

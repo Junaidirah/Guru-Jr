@@ -19,9 +19,16 @@ export function LeaderboardCard() {
         setIsLoading(true);
         const data = await getLeaderboardData();
         setLeaderboardData(data);
-      } catch (err) {
-        setError("Failed to load leaderboard data.");
+      } catch (err: unknown) {
         console.error("Gagal mengambil data leaderboard:", err);
+
+        if (err instanceof Error) {
+          setError(`Failed to load leaderboard data: ${err.message}`);
+        } else {
+          setError(
+            "Failed to load leaderboard data: An unknown error occurred."
+          );
+        }
       } finally {
         setIsLoading(false);
       }
@@ -39,8 +46,12 @@ export function LeaderboardCard() {
 
   if (error) {
     return (
-      <div className="relative bg-dashboardBlue rounded-3xl text-red-500 shadow-card overflow-hidden mx-4 p-6 text-center">
-        Error: {error}
+      <div className="relative bg-dashboardBlue rounded-3xl text-dashboardTextPrimary shadow-card overflow-hidden mx-4 p-6 text-center">
+        <p className="text-red-500 mb-2">Error: {error}</p>
+        <p className="text-sm">
+          Gagal memuat data leaderboard. Pastikan backend berjalan dan CORS
+          dikonfigurasi dengan benar.
+        </p>
       </div>
     );
   }
